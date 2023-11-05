@@ -34,7 +34,7 @@ async function run() {
       res.send(result)
     })
 
-   // get deffince Items
+   // get difference Items
 
    app.get("/api/v1/jobs",async(req,res)=>{
 
@@ -44,8 +44,27 @@ async function run() {
        categoryItems.category = category
     }
    const result = await jobsCollection.find(categoryItems).toArray();
+   
    res.send(result)
    })
+
+
+    // get difference Title Filter 
+    
+   app.get("/api/v1/jobs-title",async(req,res)=>{
+    let titleItems = { };
+    const title = req?.query?.title;
+   if(title){
+     titleItems.title = title ;
+   }
+   const result = await jobsCollection.find(titleItems).toArray();
+   res.send(result)
+   })
+
+
+
+
+
 
    // Specific ID dara Data Load
    app.get("/api/v1/jobs/:id", async(req,res)=>{
