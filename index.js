@@ -37,10 +37,13 @@ async function run() {
    // get deffince Items
 
    app.get("/api/v1/jobs",async(req,res)=>{
-    const category = req?.query?.category;
-    console.log(category);
+    let categoryItems = {} ;
 
-   const result = await jobsCollection.find().toArray();
+    const category = req?.query?.category;
+    if(category){
+       categoryItems.category = category
+    }
+   const result = await jobsCollection.find(categoryItems).toArray();
    res.send(result)
    })
 
