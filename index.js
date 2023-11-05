@@ -25,10 +25,26 @@ const client = new MongoClient(uri, {
 
 async function run() {
   try {
-    const categoryCollection = client.db("jobNestle").collection("category")
-    await client.connect();
-    // Send a ping to confirm a successful connection
-    await client.db("admin").command({ ping: 1 });
+    const categoryCollection = client.db("jobNestleDB").collection("category");
+    const jobsCollection = client.db("jobNestleDB").collection("jobs");
+
+    // get the Category Jobs
+    app.get("/api/v1/category",async(req,res)=>{
+      const result = await categoryCollection.find().toArray();
+      res.send(result)
+    })
+
+   // get deffince Items
+
+   app.get("/api/v1/jobs",async(req,res)=>{
+    const category = req?.query?.category;
+    console.log(category);
+
+   const result = await jobsCollection.find().toArray();
+   res.send(result)
+   })
+
+
     console.log("Pinged your deployment. You successfully connected to MongoDB!");
   } finally {
     // Ensures that the client will close when you finish/error

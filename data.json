@@ -1,0 +1,24 @@
+[
+    {
+        "category": "OnSite Jobs",
+        "title": "The soffer Developer Newd",
+        "sarry": 500
+    },
+    {
+        "category": "Remote Job",
+        "title": "Mean Developer Need",
+        "sarry": 700
+    },
+    {
+        "category": "Hybrid Jobs",
+        "title": "Mean Developer Need",
+        "sarry": 700
+    },
+
+  
+    {
+        "category": "Part Time",
+        "title": "Mean Developer Need",
+        "sarry": 700
+    }
+]
