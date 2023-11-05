@@ -37,8 +37,8 @@ async function run() {
    // get deffince Items
 
    app.get("/api/v1/jobs",async(req,res)=>{
-    let categoryItems = {} ;
 
+    let categoryItems = {} ;
     const category = req?.query?.category;
     if(category){
        categoryItems.category = category
@@ -46,6 +46,14 @@ async function run() {
    const result = await jobsCollection.find(categoryItems).toArray();
    res.send(result)
    })
+
+   // post method in jobs collection
+
+  app.post("/api/v1/insert-jobs", async(req,res)=>{
+    const job = req.body;
+    const result  = await jobsCollection.insertOne(job);
+    res.send(result)
+  })
 
 
     console.log("Pinged your deployment. You successfully connected to MongoDB!");
