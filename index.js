@@ -27,6 +27,7 @@ async function run() {
   try {
     const categoryCollection = client.db("jobNestleDB").collection("category");
     const jobsCollection = client.db("jobNestleDB").collection("jobs");
+    const appliedCollection = client.db("jobNestleDB").collection("applies")
 
     // get the Category Jobs
     app.get("/api/v1/category",async(req,res)=>{
@@ -75,7 +76,6 @@ async function run() {
    })
 
    // post method in jobs collection
-
   app.post("/api/v1/insert-jobs", async(req,res)=>{
     const job = req.body;
     const result  = await jobsCollection.insertOne(job);
@@ -106,6 +106,20 @@ async function run() {
  res.send(result)
 
  })
+
+
+ // patch Method use 
+
+ app.post("/api/v1/job-applies",async(req,res)=>{
+  const jobApply = req.body;
+  const result = await appliedCollection.insertOne(jobApply);
+  res.send(result)
+ })
+
+
+
+
+ // delete Method used 
 
 app.delete("/api/v1/jobs-title/:id",async(req,res)=>{
   const id = req.params.id;
