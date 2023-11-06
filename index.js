@@ -117,7 +117,22 @@ async function run() {
  })
 
 
+ // Patch Method use 
+ app.patch("/api/v1/appliedCount/:id",async(req,res)=>{
+   const count = req.body;
+   const defaultNum = Number(count.defaultNum)
+   const id = req.params.id;
+  
+   const filter = {_id : new ObjectId(id)};
+   const update = {
+    $set: {
+      defaultNum :defaultNum + 1
+    }
+   }
 
+  const result = await jobsCollection.updateOne(filter,update);
+  res.send(result)
+ })
 
  // delete Method used 
 
