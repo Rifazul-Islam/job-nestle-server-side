@@ -52,12 +52,16 @@ async function run() {
     // get difference Title Filter 
     
    app.get("/api/v1/jobs-title",async(req,res)=>{
-    let titleItems = { };
+    let query = { };
     const title = req?.query?.title;
+    const name = req?.query?.name;
    if(title){
-     titleItems.title = title ;
+    query.title = title ;
    }
-   const result = await jobsCollection.find(titleItems).toArray();
+   if(name){
+    query.name = name ;
+   }
+   const result = await jobsCollection.find(query).toArray();
    res.send(result)
    })
 
@@ -81,6 +85,35 @@ async function run() {
     const result  = await jobsCollection.insertOne(job);
     res.send(result)
   })
+
+
+ app.put("/api/v1/update-job/:id",async(req,res)=>{
+  const id = req.params.id;
+  const updateJob = req.body;
+  const filter = {_id : new ObjectId(id)}
+  const options = { upsert: true };
+  const update = {
+    $set :{
+      name: updateJob?.name,
+      photo: updateJob?.photo,
+      category: updateJob?.category,
+      title: updateJob?.title,
+      salary: updateJob?.salary,
+      description: updateJob?.description,
+      postDate: updateJob?.postDate,
+      deadline: updateJob?.deadline,
+      defaultNum: updateJob?.defaultNum
+    }
+  }
+
+  const result = await jobsCollection.updateMany(filter,update,options)
+ res.send(result)
+
+ })
+
+
+
+
 
 
     console.log("Pinged your deployment. You successfully connected to MongoDB!");
