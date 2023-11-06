@@ -66,10 +66,6 @@ async function run() {
    })
 
 
-
-
-
-
    // Specific ID dara Data Load
    app.get("/api/v1/jobs/:id", async(req,res)=>{
        const id = req.params.id;
@@ -111,8 +107,12 @@ async function run() {
 
  })
 
-
-
+app.delete("/api/v1/jobs-title/:id",async(req,res)=>{
+  const id = req.params.id;
+  const query = {_id : new ObjectId(id)};
+  const result = await jobsCollection.deleteOne(query);
+  res.send(result)
+})
 
 
 
