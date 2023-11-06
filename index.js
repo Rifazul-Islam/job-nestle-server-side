@@ -28,7 +28,7 @@ async function run() {
     const categoryCollection = client.db("jobNestleDB").collection("category");
     const jobsCollection = client.db("jobNestleDB").collection("jobs");
     const appliedCollection = client.db("jobNestleDB").collection("applies")
-
+    const companyLogoCollection = client.db("jobNestleDB").collection("companyLogo")
     // get the Category Jobs
     app.get("/api/v1/category",async(req,res)=>{
       const result = await categoryCollection.find().toArray();
@@ -108,14 +108,14 @@ async function run() {
  })
 
 
- // patch Method use 
-
- app.post("/api/v1/job-applies",async(req,res)=>{
-  const jobApply = req.body;
-  const result = await appliedCollection.insertOne(jobApply);
+ // get company logo 
+ app.get("/api/v1/company-logo",async(req,res)=>{
+  const cursor = companyLogoCollection.find();
+  const result = await cursor.toArray();
   res.send(result)
  })
 
+ 
 
  // Patch Method use 
  app.patch("/api/v1/appliedCount/:id",async(req,res)=>{
@@ -133,6 +133,33 @@ async function run() {
   const result = await jobsCollection.updateOne(filter,update);
   res.send(result)
  })
+
+
+ // email madhome data get 
+ app.get("/api/v1/applied",async(req,res)=>{
+  const query = {};
+  const name = req.query.name;
+  const category = req.query.category;
+  if(name){
+    query.name = name;
+  }
+  if(category){
+    query.category = category ;
+  }
+  const result = await appliedCollection.find(query).toArray();
+  res.send(result)
+ })
+
+
+// post  Method use 
+app.post("/api/v1/job-applies",async(req,res)=>{
+  const jobApply = req.body;
+  const result = await appliedCollection.insertOne(jobApply);
+  res.send(result)
+ })
+
+
+
 
  // delete Method used 
 

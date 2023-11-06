@@ -1,24 +1,37 @@
 [
     {
-        "category": "OnSite Jobs",
-        "title": "The soffer Developer Newd",
-        "sarry": 500
+        
+        "img": "https://i.ibb.co/MsFgPvZ/1.png"
     },
     {
-        "category": "Remote Job",
-        "title": "Mean Developer Need",
-        "sarry": 700
+        "img": "https://i.ibb.co/VVnVRMw/2.png"
     },
     {
-        "category": "Hybrid Jobs",
-        "title": "Mean Developer Need",
-        "sarry": 700
+        "img": "https://i.ibb.co/3Cr5hb4/3.png"
     },
 
-  
     {
-        "category": "Part Time",
-        "title": "Mean Developer Need",
-        "sarry": 700
+        "img": "https://i.ibb.co/HVrg5vv/4.png"
+    },
+    {
+        "img": "https://i.ibb.co/Bgt7Rk5/5.png"
+    },
+    {
+        "img": "https://i.ibb.co/zhhq9XS/6.png"
+    },
+    {
+        "img": "https://i.ibb.co/8zThppw/7.png"
+    },
+    {
+        "img": "https://i.ibb.co/K0ghQnj/8.png"
+    },
+    {
+        "img": "https://i.ibb.co/K0ghQnj/8.png"
+    },
+    {
+        "img": "https://i.ibb.co/mqS19Yb/9.png"
+    },
+    {
+        "img": "https://i.ibb.co/5c1HXSv/10.png"
     }
 ]
