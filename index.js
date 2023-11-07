@@ -1,4 +1,7 @@
 const express = require('express');
+const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
+const jwt = require('jsonwebtoken');
+const cookieParser = require('cookie-parser')
 const cors = require('cors');
 require('dotenv').config()
 const app = express();
@@ -6,12 +9,16 @@ const port = process.env.PORT || 5000 ;
 
 // middle wore
 
-app.use(cors());
+app.use(cors({
+  origin: ["http://localhost:5173"],
+  credentials : true 
+}));
 app.use(express.json());
+app.use(cookieParser())
 
 
 
-const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
+
 const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.rwemj7d.mongodb.net/?retryWrites=true&w=majority`;
 
 // Create a MongoClient with a MongoClientOptions object to set the Stable API version
@@ -23,12 +30,60 @@ const client = new MongoClient(uri, {
   }
 });
 
+// meddile Ware token verify  Function
+
+ const verifyToken = async(req,res,next)=>{
+  const token = req?.cookies?.token;
+  if(!token){
+    return res.status(401).send({message: "unauthorized Access"})
+  }
+  jwt.verify(token , process.env.ACCESS_SECRET_TOKEN , (err,decoded)=>{
+    if(err){
+      return res.status(401).send({message: "unauthorized Access"})
+    }
+
+     req.user = decoded ;
+   next()
+  })
+ }
+
+
+
+
+
+
+
 async function run() {
   try {
     const categoryCollection = client.db("jobNestleDB").collection("category");
     const jobsCollection = client.db("jobNestleDB").collection("jobs");
     const appliedCollection = client.db("jobNestleDB").collection("applies")
     const companyLogoCollection = client.db("jobNestleDB").collection("companyLogo")
+
+
+  // jwt token post api make
+
+  app.post("/api/v1/jwt",async(req,res)=>{
+    const user = req.body;
+    const token = jwt.sign(user, process.env.ACCESS_SECRET_TOKEN, { expiresIn: '7h' });
+    res.cookie("token",token,{
+      httpOnly: true,
+      secure: true,
+      sameSite: 'none'
+    }).send({success: true})
+  })
+
+ // jwt token post api make
+  app.post("/api/v1/singOut",async(req,res)=>{
+   const user = req.body;
+   res.clearCookie("token",{maxAge: 0}).send(user)
+    
+  })
+
+
+
+
+
     // get the Category Jobs
     app.get("/api/v1/category",async(req,res)=>{
       const result = await categoryCollection.find().toArray();
@@ -52,7 +107,8 @@ async function run() {
 
     // get difference Title Filter 
     
-   app.get("/api/v1/jobs-title",async(req,res)=>{
+   app.get("/api/v1/jobs-title",  async(req,res)=>{
+    
     let query = { };
     const title = req?.query?.title;
     const name = req?.query?.name;
@@ -67,8 +123,25 @@ async function run() {
    })
 
 
+
+    // get difference Name Filter 
+    
+    app.get("/api/v1/jobs-UserName",verifyToken, async(req,res)=>{
+    
+      let query = { };
+      const name = req?.query?.name;
+     if(name){
+      query.name = name ;
+     }
+     const result = await jobsCollection.find(query).toArray();
+     res.send(result)
+     })
+
+
+
    // Specific ID dara Data Load
    app.get("/api/v1/jobs/:id", async(req,res)=>{
+   
        const id = req.params.id;
        const query = {_id : new ObjectId(id)};
        const result = await jobsCollection.findOne(query);
@@ -135,23 +208,39 @@ async function run() {
  })
 
 
- // email madhome data get 
- app.get("/api/v1/applied",async(req,res)=>{
-  const query = {};
-  const name = req.query.name;
-  const category = req.query.category;
-  if(name){
-    query.name = name;
+ // email Applied data get 
+ app.get("/api/v1/applied",verifyToken, async(req,res)=>{
+  if(req?.query?.email !== req?.user?.email){
+    return res.status(403).send({message: "forbidden Access"})
   }
-  if(category){
-    query.category = category ;
+  let query = {};
+  const email = req.query.email;
+  if(email){
+    query.email = email;
   }
   const result = await appliedCollection.find(query).toArray();
   res.send(result)
  })
 
 
-// post  Method use 
+
+
+
+ 
+//  // Category Applied data get 
+//  app.get("/api/v1/applied/category", async(req,res)=>{
+
+//   let query = {};
+//   const category = req.query.email;
+//   if(category){
+//     query.category = category;
+//   }
+//   const result = await appliedCollection.find(query).toArray();
+//   res.send(result)
+//  })
+
+
+// post Applied Method use 
 app.post("/api/v1/job-applies",async(req,res)=>{
   const jobApply = req.body;
   const result = await appliedCollection.insertOne(jobApply);
