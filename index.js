@@ -7,8 +7,7 @@ require('dotenv').config()
 const app = express();
 const port = process.env.PORT || 5000 ;
 
-// middle wore
-
+// Some middle ware used
 app.use(cors({
   origin: ["http://localhost:5173"],
   credentials : true 
@@ -30,7 +29,8 @@ const client = new MongoClient(uri, {
   }
 });
 
-// meddile Ware token verify  Function
+
+// middle Ware token verify  Function
 
  const verifyToken = async(req,res,next)=>{
   const token = req?.cookies?.token;
@@ -55,14 +55,15 @@ const client = new MongoClient(uri, {
 
 async function run() {
   try {
+
+   // MongoDB All Collection 
     const categoryCollection = client.db("jobNestleDB").collection("category");
     const jobsCollection = client.db("jobNestleDB").collection("jobs");
     const appliedCollection = client.db("jobNestleDB").collection("applies")
     const companyLogoCollection = client.db("jobNestleDB").collection("companyLogo")
 
 
-  // jwt token post api make
-
+  // jwt token Make post api 
   app.post("/api/v1/jwt",async(req,res)=>{
     const user = req.body;
     const token = jwt.sign(user, process.env.ACCESS_SECRET_TOKEN, { expiresIn: '7h' });
@@ -73,7 +74,8 @@ async function run() {
     }).send({success: true})
   })
 
- // jwt token post api make
+
+ // jwt token post api and User if null then signOut 
   app.post("/api/v1/singOut",async(req,res)=>{
    const user = req.body;
    res.clearCookie("token",{maxAge: 0}).send(user)
@@ -83,12 +85,11 @@ async function run() {
 
 
 
-
-    // get the Category Jobs
-    app.get("/api/v1/category",async(req,res)=>{
-      const result = await categoryCollection.find().toArray();
-      res.send(result)
-    })
+  // get the Category Jobs
+  app.get("/api/v1/category",async(req,res)=>{
+    const result = await categoryCollection.find().toArray();
+    res.send(result)
+  })
 
    // get difference Items
 
@@ -139,7 +140,7 @@ async function run() {
 
 
 
-   // Specific ID dara Data Load
+   // Specific ID Through Data Load
    app.get("/api/v1/jobs/:id", async(req,res)=>{
    
        const id = req.params.id;
@@ -155,6 +156,9 @@ async function run() {
     res.send(result)
   })
 
+
+
+// Update the specific jobs 
 
  app.put("/api/v1/update-job/:id",async(req,res)=>{
   const id = req.params.id;
@@ -181,7 +185,7 @@ async function run() {
  })
 
 
- // get company logo 
+ // get the some company logo 
  app.get("/api/v1/company-logo",async(req,res)=>{
   const cursor = companyLogoCollection.find();
   const result = await cursor.toArray();
@@ -190,7 +194,7 @@ async function run() {
 
  
 
- // Patch Method use 
+ // Patch Method use increment job Applied
  app.patch("/api/v1/appliedCount/:id",async(req,res)=>{
    const count = req.body;
    const defaultNum = Number(count.defaultNum)
@@ -202,7 +206,6 @@ async function run() {
       defaultNum :defaultNum + 1
     }
    }
-
   const result = await jobsCollection.updateOne(filter,update);
   res.send(result)
  })
@@ -221,23 +224,6 @@ async function run() {
   const result = await appliedCollection.find(query).toArray();
   res.send(result)
  })
-
-
-
-
-
- 
-//  // Category Applied data get 
-//  app.get("/api/v1/applied/category", async(req,res)=>{
-
-//   let query = {};
-//   const category = req.query.email;
-//   if(category){
-//     query.category = category;
-//   }
-//   const result = await appliedCollection.find(query).toArray();
-//   res.send(result)
-//  })
 
 
 // post Applied Method use 
